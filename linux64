@@ -70,3 +70,4 @@ g++ -c -m64 -O2 crt.cpp
 g++ -m64 -O2 Dec.cpp ecn.o big.o miracl.a -o Dec
 g++ -m64 -O2 ReEnc.cpp ecn.o big.o miracl.a -o ReEnc
 g++ -m64 -O2 Enc.cpp ecn.o big.o miracl.a -o Enc
+g++ -m64 -O2 KeyGen.cpp ecn.o big.o miracl.a -o KeyGen

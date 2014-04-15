@@ -1,6 +1,6 @@
 /*
- *   Example program demonstrates 1024 bit Diffie-Hellman, El Gamal and RSA
- *   and 168 bit Elliptic Curve Diffie-Hellman 
+ *   Commutative Encryption Algorithm Enc(e,m) = g^{m*e}
+ *   By: Bingsheng Zhang (bzhang26@di.uoa.gr)
  *
  *   Requires: big.cpp ecn.cpp
  */
@@ -13,12 +13,13 @@
 
 //using namespace std;
 
-#define  CFILE "Cipher1.txt"
-#define  RCFILE "Cipher2.txt"
-
 /* NIST p192 bit elliptic curve prime 2#192-2#64-1 */
 
 char *ecp=(char *)"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFF";
+
+/* group order q */
+
+char *ecq=(char *)"FFFFFFFFFFFFFFFFFFFFFFFF99DEF836146BC9B1B4D22831";
 
 /* elliptic curve parameter B */
 
@@ -35,52 +36,47 @@ Miracl precision(50,0);
 Miracl precision(50,MAXBASE);
 #endif
 
-// If MR_STATIC is defined in mirdef.h, it is assumed to be 100
-
-//Miracl precision(120,(1<<26));
 
 int main(int argc, char *argv[])
 {
-    int iy, i;
-    ofstream fout;
-    time_t seed;
-    Big sk,a,b,p,x,y;
-    ECn g,h;
+    int iy;
+    Big a,b,p,q,x,y,e,m;
+    ECn g,c;
     miracl *mip=&precision;
-
-    time(&seed);
-    irand((long)seed);   /* change parameter for different values */
-
-   // cout << "Generating EC-ElGamal Public and Private Key Pairs...." << endl;
+    
+    //init curve and g
     a=-3;
     mip->IOBASE=16;
     b=ecb;
     p=ecp;
+    q=ecq;
     ecurve(a,b,p,MR_BEST);  // means use PROJECTIVE if possible, else AFFINE coordinates
     x=ecx;
     y=ecy;
     g=ECn(x,y);
-  
-for(i = 0; i< 2000; i++){
-  //Generate and output pk and sk
-    sk=rand(160,2);
-    mip->IOBASE=64;
-    cout<<sk<<endl;
-    x = inverse (sk,sk);
-   // fout.open(SKFILE);
-   // fout<<sk;
-   // fout.close();
-    h = sk*g;
-    iy=h.get(x); //<x,y> is compressed form of public key
-   // fout.open(PKFILE);
-   // fout<<x<<endl;
-   // fout<<iy;
-   // fout.close();
-}
+    
+    //obtain input
+    mip->IOBASE=64; //base 64 encoding
+    if(argc ==3){
+        e = argv[1];
+        m = argv[2];
+    }
+    else{
+        cout<< "Usage: ./Enc [key] [message]"<<endl;
+        return 0;
+    }
+    
+    //encrypt
+    e=modmult(m,e,q);
+    c = e*g;
+    iy=c.get(x); //<x,y> is compressed form of c
+    cout<<x<<" "<<iy<<endl;
 
-
-
-
+    //output g^m for debug
+    //c = m*g;
+    //iy=c.get(x); //<x,y> is compressed form of c
+    //cout<<x<<" "<<iy<<endl;
+    
     return 0;
 }
 
