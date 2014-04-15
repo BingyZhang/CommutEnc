@@ -4,6 +4,7 @@ Commutative Encryption
 Commutative encryption based on MIRACL
 
 To compile, run command
+
 bash linux64
 
 Usage:
