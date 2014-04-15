@@ -7,6 +7,7 @@ To compile, run command
 bash linux64
 
 Usage:
+
 1. Key generation
 ./KeyGen
 It outputs e,d such that ed = 1.
